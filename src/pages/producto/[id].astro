@@ -1,0 +1,158 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getProductById } from '../../lib/queries';
+
+export async function getStaticPaths() {
+  // En un proyecto real, obtendrías todos los IDs de productos de Sanity
+  // Por ahora, usaremos algunos IDs de ejemplo
+  return [
+    { params: { id: '1' } },
+    { params: { id: '2' } },
+    { params: { id: '3' } },
+  ];
+}
+
+const { id } = Astro.params;
+let product = null;
+
+try {
+  product = await getProductById(id);
+} catch (error) {
+  console.error('Error fetching product:', error);
+  return Astro.redirect('/');
+}
+
+if (!product) {
+  return Astro.redirect('/');
+}
+---
+
+<Layout title={`${product.name} - Back Bone`}>
+  <div class="min-h-screen bg-urban-black">
+    <div class="container mx-auto px-4 py-8">
+      <!-- Breadcrumb -->
+      <nav class="mb-8">
+        <ol class="flex items-center space-x-2 text-sm text-gray-400">
+          <li><a href="/" class="hover:text-urban-accent transition-colors">Inicio</a></li>
+          <li class="text-gray-600">/</li>
+          <li><a href="/#productos" class="hover:text-urban-accent transition-colors">Productos</a></li>
+          <li class="text-gray-600">/</li>
+          <li><a href={`/categoria/${product.category._id}`} class="hover:text-urban-accent transition-colors">{product.category.name}</a></li>
+          <li class="text-gray-600">/</li>
+          <li class="text-urban-white">{product.name}</li>
+        </ol>
+      </nav>
+
+      <div class="grid lg:grid-cols-2 gap-12">
+        <!-- Product Images -->
+        <div class="space-y-4">
+          <div class="aspect-square bg-urban-gray rounded-2xl overflow-hidden">
+            <img 
+              src={product.images[0] || '/ima1.webp'} 
+              alt={product.name}
+              class="w-full h-full object-cover"
+            />
+          </div>
+          {product.images.length > 1 && (
+            <div class="grid grid-cols-4 gap-4">
+              {product.images.slice(1, 5).map((image, index) => (
+                <div class="aspect-square bg-urban-gray rounded-lg overflow-hidden">
+                  <img 
+                    src={image} 
+                    alt={`${product.name} ${index + 2}`}
+                    class="w-full h-full object-cover hover:opacity-80 transition-opacity cursor-pointer"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <!-- Product Info -->
+        <div class="space-y-6">
+          <div>
+            <span class="text-urban-accent text-sm font-medium uppercase tracking-wider">
+              {product.category.name}
+            </span>
+            <h1 class="text-4xl font-black text-urban-white mt-2 mb-4">
+              {product.name}
+            </h1>
+            <p class="text-xl text-urban-accent font-bold">
+              ${product.price}
+            </p>
+          </div>
+
+          <div class="prose prose-invert max-w-none">
+            <p class="text-gray-300 leading-relaxed">
+              {product.description}
+            </p>
+          </div>
+
+          <!-- Product Details -->
+          <div class="space-y-4">
+            {product.color && (
+              <div class="flex items-center space-x-3">
+                <span class="text-gray-400 w-20">Color:</span>
+                <div class="flex items-center space-x-2">
+                  <div 
+                    class="w-6 h-6 rounded-full border-2 border-gray-600" 
+                    style={`background-color: ${product.color.hex}`}
+                  ></div>
+                  <span class="text-urban-white">{product.color.name}</span>
+                </div>
+              </div>
+            )}
+
+            {product.size && (
+              <div class="flex items-center space-x-3">
+                <span class="text-gray-400 w-20">Talla:</span>
+                <span class="text-urban-white font-medium">{product.size}</span>
+              </div>
+            )}
+
+            <div class="flex items-center space-x-3">
+              <span class="text-gray-400 w-20">Stock:</span>
+              <span class={`font-medium ${product.inStock ? 'text-green-400' : 'text-red-400'}`}>
+                {product.inStock ? 'Disponible' : 'Agotado'}
+              </span>
+            </div>
+          </div>
+
+          <!-- Add to Cart -->
+          <div class="space-y-4">
+            <button 
+              class={`w-full py-4 px-8 rounded-lg font-bold text-lg transition-colors ${
+                product.inStock 
+                  ? 'bg-urban-accent text-urban-black hover:bg-urban-accent/90' 
+                  : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+              }`}
+              disabled={!product.inStock}
+            >
+              {product.inStock ? 'Agregar al Carrito' : 'Producto Agotado'}
+            </button>
+            
+            <div class="flex space-x-4">
+              <button class="flex-1 border border-urban-secondary text-urban-secondary py-3 px-6 rounded-lg font-medium hover:bg-urban-secondary hover:text-urban-black transition-all">
+                Agregar a Favoritos
+              </button>
+              <button class="flex-1 border border-gray-600 text-gray-400 py-3 px-6 rounded-lg font-medium hover:border-urban-accent hover:text-urban-accent transition-all">
+                Compartir
+              </button>
+            </div>
+          </div>
+
+          <!-- Product Details Content -->
+          {product.details && (
+            <div class="border-t border-gray-800 pt-6">
+              <h3 class="text-xl font-bold text-urban-white mb-4">Detalles del Producto</h3>
+              <div class="prose prose-invert max-w-none text-gray-300">
+                <!-- Aquí iría el contenido de Portable Text de Sanity -->
+                <p>Información detallada sobre materiales, cuidados y especificaciones del producto.</p>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>

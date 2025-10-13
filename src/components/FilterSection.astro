@@ -1,0 +1,75 @@
+---
+export interface Props {
+  category?: string;
+  categories?: Array<{ _id: string; name: string; description?: string }>;
+  totalProducts?: number;
+}
+
+const { category = "Todos", categories = [], totalProducts = 0 } = Astro.props;
+
+// Preparar categorías para el filtro
+const filterCategories = [
+  { name: "Todos", count: totalProducts },
+  ...categories.map(cat => ({ name: cat.name, count: 0 })) // El count se puede calcular dinámicamente
+];
+
+const filters = [
+  { name: "Nuevos", active: false },
+  { name: "Sale", active: false },
+  { name: "Más Vendidos", active: false },
+  { name: "En Stock", active: false }
+];
+---
+
+<div class="py-8 bg-urban-black/50 backdrop-blur-sm">
+  <div class="container mx-auto px-4">
+    <!-- Categories -->
+    <div class="mb-6">
+      <h3 class="text-lg font-semibold mb-4 text-urban-white">Categorías</h3>
+      <div class="flex flex-wrap gap-2">
+        {filterCategories.map((cat) => (
+          <button 
+            class={`px-4 py-2 rounded-full font-medium transition-all duration-200 ${
+              category === cat.name 
+                ? 'bg-urban-accent text-urban-black' 
+                : 'bg-urban-gray border border-gray-800 text-gray-300 hover:border-urban-accent/50 hover:text-urban-white'
+            }`}
+          >
+            {cat.name}
+            <span class="ml-2 text-xs opacity-80">({cat.count})</span>
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="md:flex md:items-center md:justify-between">
+      <div class="flex flex-wrap gap-2 mb-4 md:mb-0">
+        {filters.map((filter) => (
+          <button 
+            class={`px-3 py-1 rounded-full text-sm font-medium transition-all duration-200 ${
+              filter.active 
+                ? 'bg-urban-secondary text-urban-black' 
+                : 'bg-urban-gray/50 text-gray-400 hover:text-urban-white border border-gray-700'
+            }`}
+          >
+            {filter.name}
+          </button>
+        ))}
+      </div>
+
+      <!-- Sort Options -->
+      <div class="flex items-center space-x-4">
+        <span class="text-sm text-gray-400">Ordenar por:</span>
+        <select class="bg-urban-gray border border-gray-700 rounded-lg px-3 py-2 text-sm text-urban-white focus:border-urban-accent focus:outline-none">
+          <option value="popular">Más populares</option>
+          <option value="price-low">Precio: Menor a Mayor</option>
+          <option value="price-high">Precio: Mayor a Menor</option>
+          <option value="newest">Más recientes</option>
+          <option value="oldest">Más antiguos</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+

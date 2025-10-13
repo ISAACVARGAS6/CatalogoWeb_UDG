@@ -1,0 +1,21 @@
+Ejecuta el script con: node script-catalogo.js
+
+DEMO DE OPCIONES DISPONIBLES:
+
+1. Ver todos los productos - Muestra catálogo completo
+2. Filtrar por categoría - Hoodies, Camisetas, Pantalones, Accesorios  
+3. Ordenar por precio - Menor/mayor, mayor/menor, original
+4. Mostrar solo productos nuevos - Con badge [NUEVO]
+5. Mostrar solo productos con descuento - Productos en oferta
+6. Buscar producto por nombre - Búsqueda por texto
+7. Estadísticas del catálogo - Resumen completo de productos
+8. Resetear filtros - Volver al estado inicial
+0. Salir - Cerrar el programa
+
+Ejemplo de uso rápido:
+- Opción 1: Ver todos los productos
+- Opción 2 → 1: Filtrar solo Hoodies
+- Opción 3 → 1: Ordenar hoodies por precio menor a mayor
+- Opción 7: Ver estadísticas completas
+
+¡El script está listo para usar!
