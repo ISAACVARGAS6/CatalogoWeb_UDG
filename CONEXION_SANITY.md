@@ -40,7 +40,7 @@ Crea un archivo `.env` en la raíz del proyecto:
 
 ```env
 # Sanity Configuration
-SANITY_PROJECT_ID=r2vtbuc8
+SANITY_PROJECT_ID=your-project-id
 SANITY_DATASET=production
 SANITY_API_VERSION=2025-01-01
 SANITY_USE_CDN=true
@@ -56,7 +56,7 @@ SANITY_API_TOKEN=tu_token_aqui
 export default defineConfig({
   name: 'default',
   title: 'BackBone_BackEnd',
-  projectId: 'r2vtbuc8',
+  projectId: process.env.SANITY_PROJECT_ID || 'your-project-id',
   dataset: 'production',
   plugins: [structureTool(), visionTool()],
   schema: {
@@ -73,7 +73,7 @@ export default defineConfig({
   integrations: [
     tailwind(), 
     sanity({
-      projectId: 'r2vtbuc8',
+      projectId: import.meta.env.SANITY_PROJECT_ID || 'your-project-id',
       dataset: 'production',
       apiVersion: '2025-01-01',
       useCdn: true,

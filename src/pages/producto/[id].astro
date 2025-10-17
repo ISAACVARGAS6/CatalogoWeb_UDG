@@ -2,6 +2,8 @@
 import Layout from '../../layouts/Layout.astro';
 import { getProductById } from '../../lib/queries';
 
+export const prerender = true;
+
 export async function getStaticPaths() {
   // En un proyecto real, obtendrías todos los IDs de productos de Sanity
   // Por ahora, usaremos algunos IDs de ejemplo
